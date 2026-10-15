@@ -18,6 +18,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
+
     :root {
       --bg: #F4F0EA;
       --surface: #FFFDF9;
@@ -288,11 +290,12 @@
       
       <!-- Satin-Finish LLM Model Badge with Amber Beacon -->
       <div class="flex items-center space-x-2 bg-[var(--surface)] border border-[var(--border)] px-3.5 py-1.5 rounded-full shadow-[0_1px_3px_rgba(28,25,23,0.04)] text-xs font-mono-editorial text-[var(--muted)]">
-        <span class="relative flex h-2 w-2">
+        <span class="status-dot relative flex h-2 w-2">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-60"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
         </span>
-        <span class="tracking-wider uppercase text-[11px] text-[var(--ink)] font-medium">LLAMA 3.1 8B · GROQ FAST-INFERENCE</span>
+        <span class="tracking-wider uppercase text-[11px] text-[var(--ink)] font-medium">LLAMA 3.1 &middot; </span>
+        <span style="font-family: 'Caveat', cursive; font-size: 1.15rem; font-weight: 600; margin-left: 2px;">Created by Rupam</span>
       </div>
 
       <!-- Minimal Reset Action with Keyboard Hint -->
@@ -368,11 +371,6 @@
 
       </div>
 
-      <!-- Left Panel Bottom Note -->
-      <div class="text-[11px] text-[var(--muted)] pt-3 border-t border-[var(--border)] flex items-center justify-between">
-        <span>In-memory archive</span>
-        <span class="font-mono-editorial text-[10px] text-[var(--muted)]">PORT 8000</span>
-      </div>
     </aside>
 
     <!-- ------------------------------------------------------------- -->
