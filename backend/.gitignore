@@ -1,0 +1,20 @@
+# Python cache & virtualenvs
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Environment variables & secrets (keep .env.example tracked)
+.env
+*.env
+.env.*
+!.env.example
+
+# Temporary files & local databases
+*.tmp
+*.pdf
+chroma_db/

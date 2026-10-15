@@ -1,0 +1,192 @@
+{
+  "metrics": {
+    "total_queries": 20,
+    "hits_at_k": 15,
+    "top_k": 4,
+    "hit_rate_at_k_percent": 75.0,
+    "hit_rate_at_1_percent": 45.0,
+    "mean_reciprocal_rank": 0.5792
+  },
+  "details": [
+    {
+      "id": "q01",
+      "question": "What is the primary function of the attention mechanism in transformer models?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "transformer_architecture.pdf",
+      "top_page": 3
+    },
+    {
+      "id": "q02",
+      "question": "How does dense vector retrieval differ from sparse lexical search like BM25?",
+      "hit": true,
+      "hit_rank": 2,
+      "retrieved_count": 4,
+      "top_source": "hybrid_search.pdf",
+      "top_page": 9
+    },
+    {
+      "id": "q03",
+      "question": "Why is document chunk overlap recommended when preparing text for RAG?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "rag_best_practices.pdf",
+      "top_page": 2
+    },
+    {
+      "id": "q04",
+      "question": "What role does ChromaDB play in a local RAG architecture?",
+      "hit": true,
+      "hit_rank": 2,
+      "retrieved_count": 4,
+      "top_source": "rag_troubleshooting.pdf",
+      "top_page": 8
+    },
+    {
+      "id": "q05",
+      "question": "What is the purpose of temperature parameter in LLM text generation?",
+      "hit": true,
+      "hit_rank": 3,
+      "retrieved_count": 4,
+      "top_source": "context_engineering.pdf",
+      "top_page": 4
+    },
+    {
+      "id": "q06",
+      "question": "How does cross-encoder reranking improve retrieval quality in two-stage pipelines?",
+      "hit": false,
+      "hit_rank": null,
+      "retrieved_count": 4,
+      "top_source": "context_engineering.pdf",
+      "top_page": 4
+    },
+    {
+      "id": "q07",
+      "question": "What are common failure modes of naive RAG systems?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "rag_troubleshooting.pdf",
+      "top_page": 8
+    },
+    {
+      "id": "q08",
+      "question": "What metric does HNSW optimize during vector indexing?",
+      "hit": true,
+      "hit_rank": 4,
+      "retrieved_count": 4,
+      "top_source": "advanced_retrievers.pdf",
+      "top_page": 5
+    },
+    {
+      "id": "q09",
+      "question": "How does recursive character text splitting decide where to split?",
+      "hit": false,
+      "hit_rank": null,
+      "retrieved_count": 4,
+      "top_source": "advanced_retrievers.pdf",
+      "top_page": 5
+    },
+    {
+      "id": "q10",
+      "question": "What is cosine similarity and how is it calculated between vectors?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "linear_algebra_for_ml.pdf",
+      "top_page": 3
+    },
+    {
+      "id": "q11",
+      "question": "What is the advantage of using sentence-transformers for embedding generation?",
+      "hit": false,
+      "hit_rank": null,
+      "retrieved_count": 4,
+      "top_source": "linear_algebra_for_ml.pdf",
+      "top_page": 3
+    },
+    {
+      "id": "q12",
+      "question": "How does hybrid search combine lexical and dense retrieval?",
+      "hit": true,
+      "hit_rank": 2,
+      "retrieved_count": 4,
+      "top_source": "ir_fundamentals.pdf",
+      "top_page": 5
+    },
+    {
+      "id": "q13",
+      "question": "What is hallucination in generative language models?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "llm_evaluation.pdf",
+      "top_page": 5
+    },
+    {
+      "id": "q14",
+      "question": "Why is metadata filtering useful during vector retrieval?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "vector_filtering.pdf",
+      "top_page": 2
+    },
+    {
+      "id": "q15",
+      "question": "What is context stuffing and why can it degrade RAG performance?",
+      "hit": false,
+      "hit_rank": null,
+      "retrieved_count": 4,
+      "top_source": "rag_troubleshooting.pdf",
+      "top_page": 8
+    },
+    {
+      "id": "q16",
+      "question": "How does query rewriting assist in conversational RAG?",
+      "hit": false,
+      "hit_rank": null,
+      "retrieved_count": 4,
+      "top_source": "context_engineering.pdf",
+      "top_page": 4
+    },
+    {
+      "id": "q17",
+      "question": "What is normalized discounted cumulative gain (NDCG)?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "ir_evaluation_metrics.pdf",
+      "top_page": 6
+    },
+    {
+      "id": "q18",
+      "question": "What role does tokenization play before text chunking?",
+      "hit": true,
+      "hit_rank": 2,
+      "retrieved_count": 4,
+      "top_source": "llm_evaluation.pdf",
+      "top_page": 5
+    },
+    {
+      "id": "q19",
+      "question": "What is parent document retrieval in LangChain?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "advanced_retrievers.pdf",
+      "top_page": 5
+    },
+    {
+      "id": "q20",
+      "question": "How does quantization reduce embedding memory footprint?",
+      "hit": true,
+      "hit_rank": 1,
+      "retrieved_count": 4,
+      "top_source": "vector_optimization.pdf",
+      "top_page": 7
+    }
+  ]
+}

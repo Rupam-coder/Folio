@@ -1,0 +1,36 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python Cache & Compiled Files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Node & Frontend Build Artifacts
+node_modules/
+.vercel/
+
+# Environment Variables & Secrets (keep .env.example tracked)
+.env
+*.env
+.env.*
+!.env.example
+
+# Local Vector Storage & Temporary DBs
+chroma_db/
+eval_db_temp/
+eval_db_test_client/
+test_eval_chroma/
+*.tmp
+
+# Operating System Files
+.DS_Store
+Thumbs.db

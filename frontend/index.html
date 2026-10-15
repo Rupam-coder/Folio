@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Folio. — Digital Research Instrument</title>
+
+  <!-- Google Fonts: Instrument Serif, Plus Jakarta Sans, Space Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons & Marked.js CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --bg: #F4F0EA;
+      --surface: #FFFDF9;
+      --secondary: #EAE3D5;
+      --secondary-light: #F0EBE1;
+      --ink: #1C1917;
+      --muted: #655E57;
+      --accent: #D9532F;
+      --accent-hover: #BF4321;
+      --accent-soft: rgba(217, 83, 47, 0.08);
+      --sage: #2E5A44;
+      --sage-bg: #E3EFE8;
+      --border: #E2DBD0;
+      --border-subtle: #EDE7DC;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .font-serif-editorial {
+      font-family: 'Instrument Serif', Georgia, serif;
+    }
+
+    .font-mono-editorial {
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Tactile Paper Instrument Panels with Razor Hairline Borders */
+    .tactile-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 12px 32px -8px rgba(28, 25, 23, 0.05),
+        0 4px 12px -2px rgba(28, 25, 23, 0.02);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Subtle Archival Grain Texture */
+    .paper-texture {
+      background-image: radial-gradient(rgba(28, 25, 23, 0.032) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+
+    /* Ambient Spotlight that tracks user's cursor */
+    #ambient-spotlight {
+      position: fixed;
+      width: 650px;
+      height: 650px;
+      border-radius: 9999px;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(217, 83, 47, 0.075) 0%, rgba(245, 158, 11, 0.04) 40%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.4s ease;
+      z-index: 1;
+      filter: blur(40px);
+    }
+
+    /* Laser Scanner Line for Document Ingestion */
+    @keyframes laserSweep {
+      0% { top: 2%; opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { top: 96%; opacity: 0; }
+    }
+    .laser-sweep-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #D9532F, #F59E0B, #D9532F, transparent);
+      box-shadow: 0 0 14px 2px rgba(217, 83, 47, 0.7);
+      animation: laserSweep 2s ease-in-out infinite;
+    }
+
+    /* Cascade Fade-in for Source Cards */
+    @keyframes cascadeFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .card-cascade {
+      animation: cascadeFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Pulse highlight for focused source cards */
+    @keyframes pulseHighlight {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    .source-highlight-pulse {
+      animation: pulseHighlight 0.45s ease-in-out 2;
+    }
+
+    /* Editorial Prose Styling */
+    .editorial-prose {
+      color: var(--ink);
+      font-size: 0.975rem;
+      line-height: 1.78;
+    }
+    .editorial-prose p {
+      margin-bottom: 1.1em;
+    }
+    .editorial-prose p:last-child {
+      margin-bottom: 0;
+    }
+    .editorial-prose strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .editorial-prose em {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.12em;
+      font-style: italic;
+    }
+    .editorial-prose ul {
+      list-style-type: disc;
+      margin: 0.85em 0 1.1em 1.4em;
+    }
+    .editorial-prose ol {
+      list-style-type: decimal;
+      margin: 0.85em 0 1.1em 1.4em;
+    }
+    .editorial-prose li {
+      margin-bottom: 0.45em;
+    }
+    .editorial-prose blockquote {
+      border-left: 2px solid var(--accent);
+      background: var(--bg);
+      padding: 0.85rem 1.25rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1.35rem 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .editorial-prose table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 1.35rem 0;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      font-size: 0.885rem;
+      background: var(--surface);
+    }
+    .editorial-prose th {
+      background: var(--secondary);
+      color: var(--ink);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .editorial-prose td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--ink);
+    }
+    .editorial-prose tr:last-child td {
+      border-bottom: none;
+    }
+    .editorial-prose code {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82em;
+      background: var(--secondary-light);
+      padding: 0.18em 0.45em;
+      border-radius: 5px;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+    .editorial-prose pre {
+      background: #171513;
+      color: #FAF7F2;
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin: 1.35rem 0;
+      overflow-x: auto;
+    }
+    .editorial-prose pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+    }
+
+    /* Citation Pill in Assistant Messages */
+    .citation-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--secondary-light);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.55em;
+      border-radius: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: all 0.18s ease;
+      margin: 0 2px;
+      box-shadow: 0 1px 2px rgba(28, 25, 23, 0.03);
+    }
+    .citation-pill:hover {
+      background: var(--accent);
+      color: #FFFFFF;
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(217, 83, 47, 0.25);
+    }
+
+    /* Custom Minimal Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    /* Smooth Input Spring Transition */
+    .spring-chip {
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .spring-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px -3px rgba(217, 83, 47, 0.15);
+      border-color: rgba(217, 83, 47, 0.35);
+      background-color: var(--surface);
+    }
+  </style>
+</head>
+
+<body class="h-screen p-4 md:p-5 flex flex-col gap-4 overflow-hidden select-none md:select-auto paper-texture">
+
+  <!-- Ambient Cursor-Responsive Warm Spotlight -->
+  <div id="ambient-spotlight"></div>
+
+  <!-- ==================== TOP MINIMAL HEADER BAR ==================== -->
+  <header class="h-12 shrink-0 flex items-center justify-between px-2 z-20">
+    
+    <!-- Left: Brand Wordmark -->
+    <div class="flex items-baseline space-x-3.5">
+      <span class="font-serif-editorial text-3xl font-normal tracking-tight text-[var(--ink)]">Folio.</span>
+      <span class="text-xs text-[var(--muted)] font-normal tracking-wide hidden sm:inline">Document Research Studio</span>
+    </div>
+
+    <!-- Center/Right: LLM Model Badge & Workspace Reset Action -->
+    <div class="flex items-center space-x-3">
+      
+      <!-- Satin-Finish LLM Model Badge with Amber Beacon -->
+      <div class="flex items-center space-x-2 bg-[var(--surface)] border border-[var(--border)] px-3.5 py-1.5 rounded-full shadow-[0_1px_3px_rgba(28,25,23,0.04)] text-xs font-mono-editorial text-[var(--muted)]">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-60"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+        </span>
+        <span class="tracking-wider uppercase text-[11px] text-[var(--ink)] font-medium">LLAMA 3.1 8B · GROQ FAST-INFERENCE</span>
+      </div>
+
+      <!-- Minimal Reset Action with Keyboard Hint -->
+      <button 
+        id="clear-all-btn" 
+        title="Reset workspace (⌘K or Ctrl+K)" 
+        class="text-xs text-[var(--muted)] hover:text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--secondary)] border border-[var(--border)] px-3 py-1.5 rounded-full shadow-sm transition flex items-center space-x-2 group"
+      >
+        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 transition-transform group-hover:-rotate-45"></i>
+        <span>Clear</span>
+        <kbd class="hidden sm:inline font-mono-editorial text-[10px] text-[var(--muted)] bg-[var(--secondary)]/80 px-1.5 py-0.5 rounded border border-[var(--border)]">⌘K</kbd>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- ==================== 3-PANEL TACTILE WORKBENCH ==================== -->
+  <div class="flex-1 flex gap-4 overflow-hidden z-10">
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- PANEL 1: LEFT DOCUMENT BINDER (Width: 270px)                 -->
+    <!-- ------------------------------------------------------------- -->
+    <aside class="w-[270px] shrink-0 tactile-panel p-5 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-5">
+        
+        <!-- Header -->
+        <div class="flex items-center space-x-2 border-b border-[var(--border)] pb-3">
+          <i data-lucide="book-marked" class="w-4 h-4 text-[var(--accent)]"></i>
+          <span class="font-serif-editorial text-lg text-[var(--ink)] tracking-wide">Document</span>
+        </div>
+
+        <!-- Perforated Upload Dropzone with Laser Scanner -->
+        <div 
+          id="upload-dropzone" 
+          class="relative border-2 border-dashed border-[var(--border)] bg-[var(--bg)]/50 hover:border-[var(--accent)] rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 group overflow-hidden"
+        >
+          <!-- Glowing Terracotta Laser Sweep Bar (Active during indexing) -->
+          <div id="laser-scanner" class="hidden laser-sweep-bar"></div>
+
+          <input type="file" id="pdf-file-selector" accept=".pdf" class="hidden">
+          
+          <div class="flex flex-col items-center space-y-2.5">
+            <div class="h-10 w-10 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:scale-105 transition-all shadow-sm">
+              <i data-lucide="file-up" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p id="selected-file-name" class="text-xs font-semibold text-[var(--ink)] truncate max-w-[200px]">Drop or choose PDF</p>
+              <p id="upload-hint" class="text-[11px] text-[var(--muted)] mt-0.5">Click to browse file</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Index Button -->
+        <button 
+          id="index-action-btn" 
+          disabled 
+          class="w-full py-3 px-4 rounded-xl text-xs font-semibold text-white tracking-wide transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed bg-[var(--accent)] hover:bg-[var(--accent-hover)] shadow-sm active:scale-[0.99] flex items-center justify-center space-x-2"
+        >
+          <span id="index-btn-text">Index Document</span>
+          <span id="index-btn-spinner" class="hidden animate-spin h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full"></span>
+        </button>
+
+        <!-- Minimal Document Telemetry Card (Revealed after indexing) -->
+        <div id="document-card" class="hidden p-4 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-2 transition-all">
+          <div class="flex items-center space-x-2">
+            <span class="h-2 w-2 rounded-full bg-[var(--sage)] shrink-0"></span>
+            <span class="text-xs font-semibold text-[var(--ink)] truncate" id="card-filename">--</span>
+          </div>
+          <div class="text-xs text-[var(--muted)] pl-4 font-mono-editorial text-[11px]">
+            <span id="card-pages">0</span> Pages indexed
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Left Panel Bottom Note -->
+      <div class="text-[11px] text-[var(--muted)] pt-3 border-t border-[var(--border)] flex items-center justify-between">
+        <span>In-memory archive</span>
+        <span class="font-mono-editorial text-[10px] text-[var(--muted)]">PORT 8000</span>
+      </div>
+    </aside>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- PANEL 2: CENTER READING & CHAT CANVAS (Flex-1)               -->
+    <!-- ------------------------------------------------------------- -->
+    <main class="flex-1 tactile-panel flex flex-col h-full overflow-hidden relative">
+
+      <!-- Scrollable Editorial Chat Canvas -->
+      <div id="chat-canvas-scroller" class="flex-1 overflow-y-auto px-6 md:px-14 py-8 space-y-8">
+        
+        <!-- Empty Welcome State -->
+        <div id="editorial-empty-state" class="max-w-xl mx-auto my-auto pt-24 text-center space-y-4">
+          <h1 class="font-serif-editorial text-4xl md:text-5xl font-normal text-[var(--ink)] tracking-tight">
+            Read deeply, question freely.
+          </h1>
+          <p class="text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed">
+            Attach any technical paper, book, or report to begin an exploratory study. Every statement will cite corresponding passages on the right.
+          </p>
+        </div>
+
+        <!-- Chat Conversation Messages -->
+        <div id="conversation-stream" class="space-y-9 max-w-3xl mx-auto w-full"></div>
+
+      </div>
+
+      <!-- Bottom Floating Composer -->
+      <footer class="p-5 md:px-12 border-t border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-md">
+        <div class="max-w-3xl mx-auto space-y-3">
+          
+          <!-- Dynamic Quick-Inquiry Chips with Spring Transitions -->
+          <div id="quick-prompt-chips" class="hidden flex flex-wrap gap-2 text-xs">
+            <button class="spring-chip prompt-chip bg-[var(--secondary-light)] text-[var(--ink)] px-3.5 py-1.5 rounded-full border border-[var(--border)] font-medium shadow-sm">
+              ✦ Core Summary
+            </button>
+            <button class="spring-chip prompt-chip bg-[var(--secondary-light)] text-[var(--ink)] px-3.5 py-1.5 rounded-full border border-[var(--border)] font-medium shadow-sm">
+              ✦ Extract Key Tables & Data
+            </button>
+            <button class="spring-chip prompt-chip bg-[var(--secondary-light)] text-[var(--ink)] px-3.5 py-1.5 rounded-full border border-[var(--border)] font-medium shadow-sm">
+              ✦ Critical Analysis
+            </button>
+          </div>
+
+          <!-- Floating Ivory Capsule Input Bar -->
+          <form id="editorial-chat-form" class="bg-[var(--surface)] border border-[var(--border)] rounded-full pl-6 pr-2 py-2 flex items-center shadow-[0_4px_16px_-4px_rgba(28,25,23,0.06)] focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/15 transition-all">
+            <textarea
+              id="editorial-input"
+              rows="1"
+              placeholder="Attach a document on the left to ask questions..."
+              disabled
+              class="w-full bg-transparent text-sm text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed leading-normal"
+            ></textarea>
+            
+            <button
+              type="submit"
+              id="editorial-send-btn"
+              disabled
+              class="h-9 w-9 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-white shrink-0 transition-transform hover:scale-105 active:scale-95 shadow-sm ml-2"
+            >
+              <i data-lucide="arrow-up" class="w-4 h-4"></i>
+            </button>
+          </form>
+
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- PANEL 3: RIGHT SOURCES FOOTNOTE DRAWER (Width: 320px)         -->
+    <!-- ------------------------------------------------------------- -->
+    <aside class="w-[320px] shrink-0 tactile-panel p-5 flex flex-col justify-between overflow-hidden">
+      
+      <!-- Drawer Header with Integrated Clean Status Pill -->
+      <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 mb-4 shrink-0">
+        <div class="flex items-baseline space-x-2">
+          <span class="font-serif-editorial text-xl text-[var(--ink)] tracking-wide">Sources</span>
+        </div>
+        
+        <div class="flex items-center space-x-1.5">
+          <span id="sources-counter-pill" class="text-xs font-mono-editorial text-[var(--muted)] bg-[var(--secondary-light)] border border-[var(--border)] px-2.5 py-0.5 rounded-full">
+            0 References
+          </span>
+          <span id="drawer-status-pill" class="text-[10px] font-mono-editorial text-[var(--sage)] bg-[var(--sage-bg)] border border-[var(--sage)]/30 px-2 py-0.5 rounded-full font-medium">
+            READY
+          </span>
+        </div>
+      </div>
+
+      <!-- Scrollable Footnote Deck -->
+      <div id="sources-deck" class="flex-1 overflow-y-auto space-y-3.5 pr-1">
+        
+        <!-- Empty State -->
+        <div id="sources-empty-box" class="h-full flex flex-col items-center justify-center text-center p-6 space-y-2.5 text-[var(--muted)]">
+          <i data-lucide="quote" class="w-6 h-6 text-[var(--border)]"></i>
+          <p class="text-xs font-medium text-[var(--ink)]">No references yet</p>
+          <p class="text-[11px] text-[var(--muted)] leading-relaxed">Source passages and page badges will stream here in real-time as questions are formulated.</p>
+        </div>
+
+      </div>
+
+      <!-- Clean Panel Footer -->
+      <div class="pt-3 border-t border-[var(--border)] mt-4 shrink-0 text-[11px] text-[var(--muted)] flex items-center justify-between">
+        <span class="flex items-center space-x-1">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[var(--sage)]"></i>
+          <span>Grounded retrieval</span>
+        </span>
+        <span id="footer-doc-title" class="truncate max-w-[140px] font-mono-editorial text-[10px]">No file</span>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ==================== FRONTEND JAVASCRIPT ==================== -->
+  <script>
+    const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:8000" : "YOUR_RENDER_BACKEND_URL";
+
+    // Application State
+    let currentSessionId = null;
+    let selectedPdfFile = null;
+    let isQueryPending = false;
+    let activeDocName = "";
+
+    // DOM References
+    const uploadDropzone = document.getElementById("upload-dropzone");
+    const pdfFileSelector = document.getElementById("pdf-file-selector");
+    const selectedFileName = document.getElementById("selected-file-name");
+    const uploadHint = document.getElementById("upload-hint");
+    const indexActionBtn = document.getElementById("index-action-btn");
+    const indexBtnText = document.getElementById("index-btn-text");
+    const indexBtnSpinner = document.getElementById("index-btn-spinner");
+    const laserScanner = document.getElementById("laser-scanner");
+
+    const documentCard = document.getElementById("document-card");
+    const cardFilename = document.getElementById("card-filename");
+    const cardPages = document.getElementById("card-pages");
+    const footerDocTitle = document.getElementById("footer-doc-title");
+    const drawerStatusPill = document.getElementById("drawer-status-pill");
+
+    const editorialEmptyState = document.getElementById("editorial-empty-state");
+    const conversationStream = document.getElementById("conversation-stream");
+    const chatCanvasScroller = document.getElementById("chat-canvas-scroller");
+    const quickPromptChips = document.getElementById("quick-prompt-chips");
+    const editorialInput = document.getElementById("editorial-input");
+    const editorialSendBtn = document.getElementById("editorial-send-btn");
+    const editorialChatForm = document.getElementById("editorial-chat-form");
+    const clearAllBtn = document.getElementById("clear-all-btn");
+
+    const sourcesDeck = document.getElementById("sources-deck");
+    const sourcesEmptyBox = document.getElementById("sources-empty-box");
+    const sourcesCounterPill = document.getElementById("sources-counter-pill");
+
+    const ambientSpotlight = document.getElementById("ambient-spotlight");
+
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Configure Marked
+    marked.setOptions({
+      gfm: true,
+      breaks: true,
+    });
+
+    // ------------------------------------------------------------------------
+    // 1. Cursor-Responsive Ambient Warmth Spotlight
+    // ------------------------------------------------------------------------
+    window.addEventListener("mousemove", (e) => {
+      ambientSpotlight.style.left = `${e.clientX}px`;
+      ambientSpotlight.style.top = `${e.clientY}px`;
+    });
+
+    // ------------------------------------------------------------------------
+    // 2. Keyboard Shortcut (⌘K / Ctrl+K)
+    // ------------------------------------------------------------------------
+    window.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        resetWorkspace();
+      }
+    });
+
+    // ------------------------------------------------------------------------
+    // 3. Drag & Drop File Handling
+    // ------------------------------------------------------------------------
+    uploadDropzone.addEventListener("click", () => pdfFileSelector.click());
+
+    uploadDropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      uploadDropzone.classList.add("border-[var(--accent)]", "bg-[var(--secondary-light)]");
+    });
+
+    uploadDropzone.addEventListener("dragleave", () => {
+      uploadDropzone.classList.remove("border-[var(--accent)]", "bg-[var(--secondary-light)]");
+    });
+
+    uploadDropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      uploadDropzone.classList.remove("border-[var(--accent)]", "bg-[var(--secondary-light)]");
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFileSelection(e.dataTransfer.files[0]);
+      }
+    });
+
+    pdfFileSelector.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleFileSelection(e.target.files[0]);
+      }
+    });
+
+    function handleFileSelection(file) {
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+        alert("Please select a valid PDF document.");
+        return;
+      }
+      selectedPdfFile = file;
+      activeDocName = file.name;
+      selectedFileName.textContent = file.name;
+      uploadHint.textContent = "Ready to index";
+      indexActionBtn.disabled = false;
+      indexActionBtn.classList.remove("opacity-40");
+    }
+
+    // ------------------------------------------------------------------------
+    // 4. Document Ingestion (/upload) with Scanning Laser Effect
+    // ------------------------------------------------------------------------
+    indexActionBtn.addEventListener("click", async () => {
+      if (!selectedPdfFile || isQueryPending) return;
+
+      isQueryPending = true;
+      indexActionBtn.disabled = true;
+      indexBtnText.textContent = "Indexing...";
+      indexBtnSpinner.classList.remove("hidden");
+      laserScanner.classList.remove("hidden");
+      drawerStatusPill.textContent = "INDEXING";
+      drawerStatusPill.className = "text-[10px] font-mono-editorial text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full font-medium animate-pulse";
+
+      const formData = new FormData();
+      formData.append("file", selectedPdfFile);
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Indexing failed.");
+        }
+
+        const data = await response.json();
+        currentSessionId = data.session_id;
+
+        // Reveal Document Telemetry Card
+        cardFilename.textContent = data.filename;
+        cardFilename.title = data.filename;
+        cardPages.textContent = data.page_count;
+        documentCard.classList.remove("hidden");
+        footerDocTitle.textContent = data.filename;
+        footerDocTitle.title = data.filename;
+
+        // Update Drawer Status
+        drawerStatusPill.textContent = "ACTIVE";
+        drawerStatusPill.className = "text-[10px] font-mono-editorial text-[var(--sage)] bg-[var(--sage-bg)] border border-[var(--sage)]/30 px-2 py-0.5 rounded-full font-medium";
+
+        // Enable Dynamic Composer
+        editorialInput.disabled = false;
+        editorialInput.placeholder = `Ask anything about ${data.filename}...`;
+        editorialSendBtn.disabled = false;
+        quickPromptChips.classList.remove("hidden");
+        editorialInput.focus();
+
+        // Calm Editorial Welcome Notice
+        if (editorialEmptyState) editorialEmptyState.classList.add("hidden");
+        addEditorialNotice(`Indexed <em>${escapeHtml(data.filename)}</em> (${data.page_count} pages). You may now inquire below.`);
+
+      } catch (err) {
+        alert(`Upload error: ${err.message}`);
+        drawerStatusPill.textContent = "ERROR";
+      } finally {
+        isQueryPending = false;
+        indexActionBtn.disabled = false;
+        indexBtnText.textContent = "Re-index Document";
+        indexBtnSpinner.classList.add("hidden");
+        laserScanner.classList.add("hidden");
+      }
+    });
+
+    // ------------------------------------------------------------------------
+    // 5. Chat & Query Execution (/chat)
+    // ------------------------------------------------------------------------
+    editorialChatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitUserQuery();
+    });
+
+    editorialInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        submitUserQuery();
+      }
+    });
+
+    document.querySelectorAll(".prompt-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        if (!currentSessionId) return;
+        editorialInput.value = chip.textContent.replace("✦", "").trim();
+        submitUserQuery();
+      });
+    });
+
+    async function submitUserQuery() {
+      const query = editorialInput.value.trim();
+      if (!query || isQueryPending || !currentSessionId) return;
+
+      if (editorialEmptyState) editorialEmptyState.classList.add("hidden");
+
+      // 1. Render User Message
+      renderUserMessage(query);
+      editorialInput.value = "";
+      autoResizeTextarea();
+
+      // 2. Render Loading Response
+      isQueryPending = true;
+      editorialSendBtn.disabled = true;
+      const loaderId = renderLoadingResponse();
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: currentSessionId,
+            query: query,
+            top_k: 4,
+          }),
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.detail || "Inference failed.");
+        }
+
+        const data = await response.json();
+        removeElement(loaderId);
+
+        // 3. Render Assistant Response with Interactive Citations & Terracotta Accent Line
+        renderAssistantResponse(data.answer);
+
+        // 4. Populate Sources Footnote Drawer with Cascade Animation
+        populateSourcesDrawer(data.sources);
+
+      } catch (err) {
+        removeElement(loaderId);
+        renderAssistantResponse(`*Error:* ${err.message}`);
+      } finally {
+        isQueryPending = false;
+        editorialSendBtn.disabled = false;
+        editorialInput.focus();
+        lucide.createIcons();
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // 6. Message Canvas Rendering
+    // ------------------------------------------------------------------------
+    function renderUserMessage(text) {
+      const msgWrapper = document.createElement("div");
+      msgWrapper.className = "flex justify-end w-full";
+      msgWrapper.innerHTML = `
+        <div class="bg-[var(--secondary)] text-[var(--ink)] rounded-2xl px-5 py-3.5 max-w-xl text-sm leading-relaxed font-medium shadow-sm">
+          ${escapeHtml(text)}
+        </div>
+      `;
+      conversationStream.appendChild(msgWrapper);
+      scrollCanvasToBottom();
+    }
+
+    function renderAssistantResponse(rawMarkdown) {
+      const msgWrapper = document.createElement("div");
+      msgWrapper.className = "w-full pl-4 border-l-2 border-[var(--accent)] space-y-2 transition-all";
+      
+      // Parse markdown with interactive citation pill formatting
+      const formattedWithPills = formatCitationPills(rawMarkdown);
+      const parsedHtml = marked.parse(formattedWithPills);
+
+      msgWrapper.innerHTML = `
+        <div class="editorial-prose">
+          ${parsedHtml}
+        </div>
+      `;
+      conversationStream.appendChild(msgWrapper);
+      scrollCanvasToBottom();
+      lucide.createIcons();
+    }
+
+    // Converts citations like [Source: ..., Page X] or [Page X] into interactive pills
+    function formatCitationPills(text) {
+      return text.replace(/\[(Source:[^,]+,\s*)?Page\s*(\d+)(?:,\s*Chunk\s*(\d+))?\]/gi, (match, src, page, chunk) => {
+        const pageNum = page || '1';
+        return `<span class="citation-pill" data-page="${pageNum}" onclick="focusSourceCard(${pageNum})">⌗ PAGE ${pageNum}</span>`;
+      });
+    }
+
+    function renderLoadingResponse() {
+      const id = `loading-${Date.now()}`;
+      const div = document.createElement("div");
+      div.id = id;
+      div.className = "w-full pl-4 border-l-2 border-[var(--border)] py-4 space-y-2.5 animate-pulse";
+      div.innerHTML = `
+        <div class="h-3 w-1/4 rounded bg-[var(--secondary)]"></div>
+        <div class="h-3 w-3/4 rounded bg-[var(--secondary)]"></div>
+        <div class="h-3 w-1/2 rounded bg-[var(--secondary)]"></div>
+      `;
+      conversationStream.appendChild(div);
+      scrollCanvasToBottom();
+      return id;
+    }
+
+    function addEditorialNotice(htmlNotice) {
+      const div = document.createElement("div");
+      div.className = "py-3 px-5 rounded-2xl bg-[var(--secondary)]/50 border border-[var(--border)] text-xs text-[var(--muted)] text-center max-w-lg mx-auto";
+      div.innerHTML = htmlNotice;
+      conversationStream.appendChild(div);
+      scrollCanvasToBottom();
+    }
+
+    // ------------------------------------------------------------------------
+    // 7. Sources Drawer with Staggered Fade-in & Interactive Linking
+    // ------------------------------------------------------------------------
+    function populateSourcesDrawer(sources) {
+      sourcesDeck.innerHTML = "";
+
+      if (!sources || sources.length === 0) {
+        sourcesDeck.appendChild(sourcesEmptyBox);
+        sourcesCounterPill.textContent = "0 References";
+        return;
+      }
+
+      sourcesCounterPill.textContent = `${sources.length} ${sources.length === 1 ? 'Reference' : 'References'}`;
+
+      sources.forEach((source, index) => {
+        // Critical normalization: remove linebreaks so words flow as a readable paragraph
+        const cleanContent = source.content.replace(/\s+/g, ' ').trim();
+
+        const card = document.createElement("div");
+        card.id = `source-card-${source.page}-${index}`;
+        card.dataset.page = source.page;
+        card.className = "card-cascade bg-[var(--surface)] border-t-2 border-[var(--accent)] border-x border-b border-[var(--border)] rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer space-y-2";
+        card.style.animationDelay = `${index * 80}ms`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-mono-editorial text-[11px] font-bold text-[var(--accent)] bg-[var(--secondary-light)] px-2 py-0.5 rounded border border-[var(--border)]">
+              PAGE ${String(source.page).padStart(2, '0')}
+            </span>
+            <span class="text-[11px] text-[var(--muted)] font-mono-editorial">REF #${index + 1}</span>
+          </div>
+
+          <p class="text-xs leading-relaxed text-[var(--ink)] line-clamp-4 whitespace-normal break-words font-normal" id="content-text-${index}">
+            ${escapeHtml(cleanContent)}
+          </p>
+
+          <div class="text-[10px] text-[var(--muted)] flex items-center justify-between pt-1 border-t border-[var(--border-subtle)]">
+            <span class="truncate max-w-[180px]">${escapeHtml(source.source)}</span>
+            <span class="text-[var(--accent)] hover:underline font-medium" id="expand-btn-${index}">Expand</span>
+          </div>
+        `;
+
+        // Click to toggle full paragraph vs clamped
+        card.addEventListener("click", () => {
+          const textEl = document.getElementById(`content-text-${index}`);
+          const btnEl = document.getElementById(`expand-btn-${index}`);
+          if (textEl.classList.contains("line-clamp-4")) {
+            textEl.classList.remove("line-clamp-4");
+            btnEl.textContent = "Collapse";
+            card.classList.add("ring-2", "ring-[var(--accent)]/40");
+          } else {
+            textEl.classList.add("line-clamp-4");
+            btnEl.textContent = "Expand";
+            card.classList.remove("ring-2", "ring-[var(--accent)]/40");
+          }
+        });
+
+        sourcesDeck.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Triggered when user clicks a citation pill in the chat
+    window.focusSourceCard = function(pageNum) {
+      const matchingCards = document.querySelectorAll(`[data-page="${pageNum}"]`);
+      if (matchingCards.length > 0) {
+        const targetCard = matchingCards[0];
+        targetCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        targetCard.classList.add("source-highlight-pulse", "ring-2", "ring-[var(--accent)]");
+        setTimeout(() => {
+          targetCard.classList.remove("source-highlight-pulse", "ring-2", "ring-[var(--accent)]");
+        }, 1500);
+      }
+    };
+
+    // ------------------------------------------------------------------------
+    // 8. Workspace Reset & Clear Logic
+    // ------------------------------------------------------------------------
+    clearAllBtn.addEventListener("click", resetWorkspace);
+
+    function resetWorkspace() {
+      currentSessionId = null;
+      selectedPdfFile = null;
+      activeDocName = "";
+
+      pdfFileSelector.value = "";
+      selectedFileName.textContent = "Drop or choose PDF";
+      uploadHint.textContent = "Click to browse file";
+      indexActionBtn.disabled = true;
+      indexActionBtn.classList.add("opacity-40");
+
+      documentCard.classList.add("hidden");
+      footerDocTitle.textContent = "No file";
+      drawerStatusPill.textContent = "READY";
+      drawerStatusPill.className = "text-[10px] font-mono-editorial text-[var(--sage)] bg-[var(--sage-bg)] border border-[var(--sage)]/30 px-2 py-0.5 rounded-full font-medium";
+
+      editorialInput.disabled = true;
+      editorialInput.placeholder = "Attach a document on the left to ask questions...";
+      editorialSendBtn.disabled = true;
+      quickPromptChips.classList.add("hidden");
+
+      conversationStream.innerHTML = "";
+      if (editorialEmptyState) editorialEmptyState.classList.remove("hidden");
+
+      sourcesDeck.innerHTML = "";
+      sourcesDeck.appendChild(sourcesEmptyBox);
+      sourcesCounterPill.textContent = "0 References";
+    }
+
+    function scrollCanvasToBottom() {
+      chatCanvasScroller.scrollTop = chatCanvasScroller.scrollHeight;
+    }
+
+    function removeElement(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function autoResizeTextarea() {
+      editorialInput.style.height = "auto";
+      editorialInput.style.height = Math.min(editorialInput.scrollHeight, 120) + "px";
+    }
+    editorialInput.addEventListener("input", autoResizeTextarea);
+  </script>
+</body>
+</html>

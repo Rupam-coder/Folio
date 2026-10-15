@@ -1,0 +1,162 @@
+[
+  {
+    "id": "q01",
+    "question": "What is the primary function of the attention mechanism in transformer models?",
+    "ground_truth_chunk_id": "chunk_01",
+    "ground_truth_source": "transformer_architecture.pdf",
+    "ground_truth_page": 3,
+    "ground_truth_text": "The attention mechanism allows the model to dynamically weight the importance of different tokens in the input sequence, enabling long-range dependency modeling without recurrent connections."
+  },
+  {
+    "id": "q02",
+    "question": "How does dense vector retrieval differ from sparse lexical search like BM25?",
+    "ground_truth_chunk_id": "chunk_02",
+    "ground_truth_source": "ir_fundamentals.pdf",
+    "ground_truth_page": 5,
+    "ground_truth_text": "Dense retrieval maps queries and documents into continuous embedding spaces to capture semantic similarity, whereas sparse methods like BM25 rely on exact keyword matches and term frequency statistics."
+  },
+  {
+    "id": "q03",
+    "question": "Why is document chunk overlap recommended when preparing text for RAG?",
+    "ground_truth_chunk_id": "chunk_03",
+    "ground_truth_source": "rag_best_practices.pdf",
+    "ground_truth_page": 2,
+    "ground_truth_text": "Chunk overlap ensures semantic continuity across chunk boundaries, preventing critical contextual information or multi-sentence concepts from being truncated."
+  },
+  {
+    "id": "q04",
+    "question": "What role does ChromaDB play in a local RAG architecture?",
+    "ground_truth_chunk_id": "chunk_04",
+    "ground_truth_source": "vector_databases.pdf",
+    "ground_truth_page": 1,
+    "ground_truth_text": "ChromaDB serves as the embedding store and vector search engine, storing vector embeddings alongside metadata and executing nearest-neighbor similarity searches efficiently on local disk."
+  },
+  {
+    "id": "q05",
+    "question": "What is the purpose of temperature parameter in LLM text generation?",
+    "ground_truth_chunk_id": "chunk_05",
+    "ground_truth_source": "llm_parameters.pdf",
+    "ground_truth_page": 4,
+    "ground_truth_text": "The temperature parameter controls the randomness of token sampling: lower temperatures produce deterministic and factual responses, while higher values increase creativity and token diversity."
+  },
+  {
+    "id": "q06",
+    "question": "How does cross-encoder reranking improve retrieval quality in two-stage pipelines?",
+    "ground_truth_chunk_id": "chunk_06",
+    "ground_truth_source": "reranking_techniques.pdf",
+    "ground_truth_page": 7,
+    "ground_truth_text": "Cross-encoders process the query and candidate passage jointly through self-attention layers, computing precise relevance scores that outperform bi-encoder vector dot products."
+  },
+  {
+    "id": "q07",
+    "question": "What are common failure modes of naive RAG systems?",
+    "ground_truth_chunk_id": "chunk_07",
+    "ground_truth_source": "rag_troubleshooting.pdf",
+    "ground_truth_page": 8,
+    "ground_truth_text": "Common failure modes include retrieval of irrelevant chunks, context window overflow, hallucinations caused by ambiguous context, and failure to integrate multi-hop reasoning across documents."
+  },
+  {
+    "id": "q08",
+    "question": "What metric does HNSW optimize during vector indexing?",
+    "ground_truth_chunk_id": "chunk_08",
+    "ground_truth_source": "approximate_nearest_neighbors.pdf",
+    "ground_truth_page": 6,
+    "ground_truth_text": "Hierarchical Navigable Small World (HNSW) graphs optimize approximate nearest neighbor search by constructing multi-layer proximity graphs with logarithmic search time complexity."
+  },
+  {
+    "id": "q09",
+    "question": "How does recursive character text splitting decide where to split?",
+    "ground_truth_chunk_id": "chunk_09",
+    "ground_truth_source": "chunking_strategies.pdf",
+    "ground_truth_page": 2,
+    "ground_truth_text": "RecursiveCharacterTextSplitter attempts splits hierarchically starting with double newlines, then single newlines, spaces, and finally individual characters until chunks fit within the target length."
+  },
+  {
+    "id": "q10",
+    "question": "What is cosine similarity and how is it calculated between vectors?",
+    "ground_truth_chunk_id": "chunk_10",
+    "ground_truth_source": "linear_algebra_for_ml.pdf",
+    "ground_truth_page": 3,
+    "ground_truth_text": "Cosine similarity measures the cosine of the angle between two non-zero vectors, computed as their dot product divided by the product of their Euclidean norms."
+  },
+  {
+    "id": "q11",
+    "question": "What is the advantage of using sentence-transformers for embedding generation?",
+    "ground_truth_chunk_id": "chunk_11",
+    "ground_truth_source": "embedding_models.pdf",
+    "ground_truth_page": 4,
+    "ground_truth_text": "Sentence-transformers use Siamese BERT networks with mean-pooling to generate fixed-size dense representations that can be compared using fast vector distance metrics."
+  },
+  {
+    "id": "q12",
+    "question": "How does hybrid search combine lexical and dense retrieval?",
+    "ground_truth_chunk_id": "chunk_12",
+    "ground_truth_source": "hybrid_search.pdf",
+    "ground_truth_page": 9,
+    "ground_truth_text": "Hybrid search combines sparse keyword scores from BM25 with dense embedding similarity using Reciprocal Rank Fusion (RRF) or weighted linear score combinations."
+  },
+  {
+    "id": "q13",
+    "question": "What is hallucination in generative language models?",
+    "ground_truth_chunk_id": "chunk_13",
+    "ground_truth_source": "llm_evaluation.pdf",
+    "ground_truth_page": 5,
+    "ground_truth_text": "Hallucination refers to instances where a language model generates syntactically fluent text that is factually incorrect, unverifiable, or unsupported by provided reference context."
+  },
+  {
+    "id": "q14",
+    "question": "Why is metadata filtering useful during vector retrieval?",
+    "ground_truth_chunk_id": "chunk_14",
+    "ground_truth_source": "vector_filtering.pdf",
+    "ground_truth_page": 2,
+    "ground_truth_text": "Metadata filtering restricts vector search to specific subsets of documents based on attributes like document type, publication date, tenant ID, or access permissions."
+  },
+  {
+    "id": "q15",
+    "question": "What is context stuffing and why can it degrade RAG performance?",
+    "ground_truth_chunk_id": "chunk_15",
+    "ground_truth_source": "context_engineering.pdf",
+    "ground_truth_page": 4,
+    "ground_truth_text": "Context stuffing packs excessive or low-quality documents into the prompt, triggering the 'lost in the middle' effect where LLMs overlook crucial facts placed in middle positions."
+  },
+  {
+    "id": "q16",
+    "question": "How does query rewriting assist in conversational RAG?",
+    "ground_truth_chunk_id": "chunk_16",
+    "ground_truth_source": "conversational_rag.pdf",
+    "ground_truth_page": 3,
+    "ground_truth_text": "Query rewriting transforms context-dependent follow-up questions containing pronouns into standalone, self-contained queries that yield better retriever hit rates."
+  },
+  {
+    "id": "q17",
+    "question": "What is normalized discounted cumulative gain (NDCG)?",
+    "ground_truth_chunk_id": "chunk_17",
+    "ground_truth_source": "ir_evaluation_metrics.pdf",
+    "ground_truth_page": 6,
+    "ground_truth_text": "NDCG is a ranking quality metric that penalizes relevant documents appearing lower in the search ranking by dividing their relevance gain by the logarithm of their rank position."
+  },
+  {
+    "id": "q18",
+    "question": "What role does tokenization play before text chunking?",
+    "ground_truth_chunk_id": "chunk_18",
+    "ground_truth_source": "nlp_preprocessing.pdf",
+    "ground_truth_page": 1,
+    "ground_truth_text": "Tokenization converts raw character strings into subword tokens recognized by language models, ensuring that chunk sizes do not exceed embedding model input limits."
+  },
+  {
+    "id": "q19",
+    "question": "What is parent document retrieval in LangChain?",
+    "ground_truth_chunk_id": "chunk_19",
+    "ground_truth_source": "advanced_retrievers.pdf",
+    "ground_truth_page": 5,
+    "ground_truth_text": "Parent document retrieval indexes small sub-chunks for accurate vector similarity matching but returns larger parent chunks to the LLM to provide richer context."
+  },
+  {
+    "id": "q20",
+    "question": "How does quantization reduce embedding memory footprint?",
+    "ground_truth_chunk_id": "chunk_20",
+    "ground_truth_source": "vector_optimization.pdf",
+    "ground_truth_page": 7,
+    "ground_truth_text": "Scalar and product quantization compress 32-bit floating-point embedding dimensions into 8-bit or binary codes, reducing memory requirements by up to 90% with minimal loss in recall."
+  }
+]
