@@ -2,7 +2,7 @@
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Folio. — Digital Research Instrument</title>
 
   <!-- Google Fonts: Instrument Serif, Plus Jakarta Sans, Space Mono -->
@@ -268,57 +268,218 @@
       border-color: rgba(217, 83, 47, 0.35);
       background-color: var(--surface);
     }
+
+    /* Responsive Viewport Resets & Mobile Adaptations */
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Input font-size to prevent automatic iOS Safari zoom */
+    #editorial-input {
+      font-size: 16px !important;
+    }
+
+    /* Horizontal scroll for prompt chips */
+    #quick-prompt-chips {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      padding-bottom: 8px !important;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #quick-prompt-chips.hidden {
+      display: none !important;
+    }
+    #quick-prompt-chips::-webkit-scrollbar {
+      display: none;
+    }
+    .prompt-chip {
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+    }
+
+    /* Fixed chat input container with safe-area insets */
+    #chat-composer-footer {
+      padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Ensure code blocks and tables within responses use overflow-x: auto */
+    .editorial-prose pre,
+    .editorial-prose table {
+      overflow-x: auto !important;
+      max-width: 100% !important;
+      -webkit-overflow-scrolling: touch;
+      display: block;
+    }
+    .editorial-prose pre code {
+      white-space: pre !important;
+      word-break: normal !important;
+      word-wrap: normal !important;
+    }
+    .editorial-prose table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    /* Mobile Responsive Layout (@media (max-width: 992px)) */
+    @media (max-width: 992px) {
+      .workbench-container {
+        flex-direction: column !important;
+        position: relative !important;
+        height: 100% !important;
+      }
+      .panel-view {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+        border-radius: 20px !important;
+      }
+      .panel-view.hidden {
+        display: none !important;
+      }
+      #mobile-tab-bar {
+        display: flex !important;
+      }
+      #chat-canvas-scroller {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        padding-top: 16px !important;
+      }
+      .user-msg-bubble {
+        max-width: 92% !important;
+      }
+      .assistant-msg-bubble {
+        max-width: 95% !important;
+      }
+    }
+
+    @media (min-width: 993px) {
+      #mobile-tab-bar {
+        display: none !important;
+      }
+      #panel-document,
+      #panel-chat,
+      #panel-sources {
+        display: flex !important;
+      }
+    }
+
+    /* Screen <= 640px Header & Badge adjustments */
+    @media (max-width: 640px) {
+      #llm-model-badge {
+        padding: 4px 8px !important;
+      }
+      #badge-author-cursive {
+        font-size: 0.95rem !important;
+      }
+      #chat-composer-footer {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        padding-top: 10px !important;
+      }
+    }
+
+    /* Screen < 420px: Hide subtitle, compact badge */
+    @media (max-width: 420px) {
+      #brand-subtitle {
+        display: none !important;
+      }
+      #llm-model-badge {
+        padding: 3px 6px !important;
+      }
+      #badge-author-cursive {
+        font-size: 0.88rem !important;
+      }
+    }
   </style>
 </head>
 
-<body class="h-screen p-4 md:p-5 flex flex-col gap-4 overflow-hidden select-none md:select-auto paper-texture">
+<body class="h-[100dvh] h-screen w-full p-2.5 sm:p-4 md:p-5 flex flex-col gap-2.5 sm:gap-4 overflow-hidden select-none md:select-auto paper-texture">
 
   <!-- Ambient Cursor-Responsive Warm Spotlight -->
   <div id="ambient-spotlight"></div>
 
   <!-- ==================== TOP MINIMAL HEADER BAR ==================== -->
-  <header class="h-12 shrink-0 flex items-center justify-between px-2 z-20">
+  <header class="h-12 shrink-0 flex items-center justify-between px-1 sm:px-2 z-20">
     
     <!-- Left: Brand Wordmark -->
-    <div class="flex items-baseline space-x-3.5">
-      <span class="font-serif-editorial text-3xl font-normal tracking-tight text-[var(--ink)]">Folio.</span>
-      <span class="text-xs text-[var(--muted)] font-normal tracking-wide hidden sm:inline">Document Research Studio</span>
+    <div class="flex items-baseline space-x-2 sm:space-x-3.5 shrink-0">
+      <span class="font-serif-editorial text-2xl sm:text-3xl font-normal tracking-tight text-[var(--ink)]">Folio.</span>
+      <span id="brand-subtitle" class="text-[11px] sm:text-xs text-[var(--muted)] font-normal tracking-wide hidden min-[420px]:inline">Document Research Studio</span>
     </div>
 
     <!-- Center/Right: LLM Model Badge & Workspace Reset Action -->
-    <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-1.5 sm:space-x-3">
       
       <!-- Satin-Finish LLM Model Badge with Amber Beacon -->
-      <div class="flex items-center space-x-2 bg-[var(--surface)] border border-[var(--border)] px-3.5 py-1.5 rounded-full shadow-[0_1px_3px_rgba(28,25,23,0.04)] text-xs font-mono-editorial text-[var(--muted)]">
-        <span class="status-dot relative flex h-2 w-2">
+      <div id="llm-model-badge" class="flex items-center space-x-1.5 sm:space-x-2 bg-[var(--surface)] border border-[var(--border)] px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-[0_1px_3px_rgba(28,25,23,0.04)] text-[10px] sm:text-xs font-mono-editorial text-[var(--muted)]">
+        <span class="status-dot relative flex h-2 w-2 shrink-0">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-60"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
         </span>
-        <span class="tracking-wider uppercase text-[11px] text-[var(--ink)] font-medium">LLAMA 3.1 &middot; </span>
-        <span style="font-family: 'Caveat', cursive; font-size: 1.15rem; font-weight: 600; margin-left: 2px;">Created by Rupam</span>
+        <span class="tracking-wider uppercase text-[9px] sm:text-[11px] text-[var(--ink)] font-medium whitespace-nowrap">LLAMA 3.1 &middot; </span>
+        <span id="badge-author-cursive" style="font-family: 'Caveat', cursive; font-size: 1.15rem; font-weight: 600; margin-left: 2px; white-space: nowrap;">Created by Rupam</span>
       </div>
 
       <!-- Minimal Reset Action with Keyboard Hint -->
       <button 
         id="clear-all-btn" 
         title="Reset workspace (⌘K or Ctrl+K)" 
-        class="text-xs text-[var(--muted)] hover:text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--secondary)] border border-[var(--border)] px-3 py-1.5 rounded-full shadow-sm transition flex items-center space-x-2 group"
+        class="text-xs text-[var(--muted)] hover:text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--secondary)] border border-[var(--border)] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-sm transition flex items-center space-x-1.5 sm:space-x-2 group shrink-0"
       >
         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 transition-transform group-hover:-rotate-45"></i>
-        <span>Clear</span>
-        <kbd class="hidden sm:inline font-mono-editorial text-[10px] text-[var(--muted)] bg-[var(--secondary)]/80 px-1.5 py-0.5 rounded border border-[var(--border)]">⌘K</kbd>
+        <span class="hidden min-[480px]:inline text-xs">Clear</span>
+        <kbd class="hidden md:inline font-mono-editorial text-[10px] text-[var(--muted)] bg-[var(--secondary)]/80 px-1.5 py-0.5 rounded border border-[var(--border)]">⌘K</kbd>
       </button>
 
     </div>
   </header>
 
+  <!-- ==================== MOBILE VIEW TOGGLE TABS (Screens <= 992px) ==================== -->
+  <nav id="mobile-tab-bar" class="shrink-0 flex items-center p-1 bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-sm z-20 gap-1">
+    <button 
+      type="button" 
+      id="tab-btn-document" 
+      class="mobile-tab-btn flex-1 py-1.5 sm:py-2 px-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all text-[var(--accent)] bg-[var(--surface)] shadow-sm font-semibold border border-[var(--border)]/70"
+      onclick="switchMobileTab('document')"
+    >
+      <i data-lucide="book-marked" class="w-3.5 h-3.5 text-[var(--accent)]"></i>
+      <span>Document</span>
+    </button>
+    <button 
+      type="button" 
+      id="tab-btn-chat" 
+      class="mobile-tab-btn flex-1 py-1.5 sm:py-2 px-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all text-[var(--muted)] hover:text-[var(--ink)] font-medium border border-transparent"
+      onclick="switchMobileTab('chat')"
+    >
+      <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+      <span>Chat</span>
+    </button>
+    <button 
+      type="button" 
+      id="tab-btn-sources" 
+      class="mobile-tab-btn flex-1 py-1.5 sm:py-2 px-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all text-[var(--muted)] hover:text-[var(--ink)] font-medium border border-transparent"
+      onclick="switchMobileTab('sources')"
+    >
+      <i data-lucide="quote" class="w-3.5 h-3.5"></i>
+      <span>Sources</span>
+      <span id="mobile-sources-counter" class="text-[10px] font-mono-editorial bg-[var(--secondary-light)] border border-[var(--border)] px-1.5 py-0.2 rounded-full text-[var(--muted)]">0</span>
+    </button>
+  </nav>
+
   <!-- ==================== 3-PANEL TACTILE WORKBENCH ==================== -->
-  <div class="flex-1 flex gap-4 overflow-hidden z-10">
+  <div class="workbench-container flex-1 flex gap-3 sm:gap-4 overflow-hidden z-10 relative w-full">
 
     <!-- ------------------------------------------------------------- -->
     <!-- PANEL 1: LEFT DOCUMENT BINDER (Width: 270px)                 -->
     <!-- ------------------------------------------------------------- -->
-    <aside class="w-[270px] shrink-0 tactile-panel p-5 flex flex-col justify-between overflow-y-auto">
+    <aside id="panel-document" class="panel-view w-full lg:w-[270px] shrink-0 tactile-panel p-4 sm:p-5 flex flex-col justify-between overflow-y-auto">
       <div class="space-y-5">
         
         <!-- Header -->
@@ -376,32 +537,32 @@
     <!-- ------------------------------------------------------------- -->
     <!-- PANEL 2: CENTER READING & CHAT CANVAS (Flex-1)               -->
     <!-- ------------------------------------------------------------- -->
-    <main class="flex-1 tactile-panel flex flex-col h-full overflow-hidden relative">
+    <main id="panel-chat" class="panel-view flex-1 tactile-panel flex flex-col h-full overflow-hidden relative w-full">
 
       <!-- Scrollable Editorial Chat Canvas -->
-      <div id="chat-canvas-scroller" class="flex-1 overflow-y-auto px-6 md:px-14 py-8 space-y-8">
+      <div id="chat-canvas-scroller" class="flex-1 overflow-y-auto px-4 sm:px-6 md:px-14 py-6 sm:py-8 space-y-6 sm:space-y-8">
         
         <!-- Empty Welcome State -->
-        <div id="editorial-empty-state" class="max-w-xl mx-auto my-auto pt-24 text-center space-y-4">
-          <h1 class="font-serif-editorial text-4xl md:text-5xl font-normal text-[var(--ink)] tracking-tight">
+        <div id="editorial-empty-state" class="max-w-xl mx-auto my-auto pt-16 sm:pt-24 text-center space-y-3 sm:space-y-4">
+          <h1 class="font-serif-editorial text-3xl sm:text-4xl md:text-5xl font-normal text-[var(--ink)] tracking-tight">
             Read deeply, question freely.
           </h1>
-          <p class="text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed">
+          <p class="text-xs sm:text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed">
             Attach any technical paper, book, or report to begin an exploratory study. Every statement will cite corresponding passages on the right.
           </p>
         </div>
 
         <!-- Chat Conversation Messages -->
-        <div id="conversation-stream" class="space-y-9 max-w-3xl mx-auto w-full"></div>
+        <div id="conversation-stream" class="space-y-6 sm:space-y-9 max-w-3xl mx-auto w-full"></div>
 
       </div>
 
       <!-- Bottom Floating Composer -->
-      <footer class="p-5 md:px-12 border-t border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-md">
-        <div class="max-w-3xl mx-auto space-y-3">
+      <footer id="chat-composer-footer" class="p-3 sm:p-5 md:px-12 border-t border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-md">
+        <div class="max-w-3xl mx-auto space-y-2.5 sm:space-y-3">
           
           <!-- Dynamic Quick-Inquiry Chips with Spring Transitions -->
-          <div id="quick-prompt-chips" class="hidden flex flex-wrap gap-2 text-xs">
+          <div id="quick-prompt-chips" class="hidden flex flex-nowrap gap-2 text-xs overflow-x-auto pb-2">
             <button class="spring-chip prompt-chip bg-[var(--secondary-light)] text-[var(--ink)] px-3.5 py-1.5 rounded-full border border-[var(--border)] font-medium shadow-sm">
               ✦ Core Summary
             </button>
@@ -414,20 +575,20 @@
           </div>
 
           <!-- Floating Ivory Capsule Input Bar -->
-          <form id="editorial-chat-form" class="bg-[var(--surface)] border border-[var(--border)] rounded-full pl-6 pr-2 py-2 flex items-center shadow-[0_4px_16px_-4px_rgba(28,25,23,0.06)] focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/15 transition-all">
+          <form id="editorial-chat-form" class="bg-[var(--surface)] border border-[var(--border)] rounded-full pl-4 sm:pl-6 pr-1.5 sm:pr-2 py-1.5 sm:py-2 flex items-center shadow-[0_4px_16px_-4px_rgba(28,25,23,0.06)] focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/15 transition-all">
             <textarea
               id="editorial-input"
               rows="1"
               placeholder="Attach a document on the left to ask questions..."
               disabled
-              class="w-full bg-transparent text-sm text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed leading-normal"
+              class="w-full bg-transparent text-sm sm:text-sm text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed leading-normal"
             ></textarea>
             
             <button
               type="submit"
               id="editorial-send-btn"
               disabled
-              class="h-9 w-9 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-white shrink-0 transition-transform hover:scale-105 active:scale-95 shadow-sm ml-2"
+              class="h-8 sm:h-9 w-8 sm:w-9 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-white shrink-0 transition-transform hover:scale-105 active:scale-95 shadow-sm ml-1.5 sm:ml-2"
             >
               <i data-lucide="arrow-up" class="w-4 h-4"></i>
             </button>
@@ -441,7 +602,7 @@
     <!-- ------------------------------------------------------------- -->
     <!-- PANEL 3: RIGHT SOURCES FOOTNOTE DRAWER (Width: 320px)         -->
     <!-- ------------------------------------------------------------- -->
-    <aside class="w-[320px] shrink-0 tactile-panel p-5 flex flex-col justify-between overflow-hidden">
+    <aside id="panel-sources" class="panel-view w-full lg:w-[320px] shrink-0 tactile-panel p-4 sm:p-5 flex flex-col justify-between overflow-hidden">
       
       <!-- Drawer Header with Integrated Clean Status Pill -->
       <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 mb-4 shrink-0">
@@ -534,6 +695,72 @@
       gfm: true,
       breaks: true,
     });
+
+    // ------------------------------------------------------------------------
+    // Mobile View Toggle Tabs Navigation (Screens <= 992px)
+    // ------------------------------------------------------------------------
+    let currentMobileTab = "document";
+
+    window.switchMobileTab = function(tabName) {
+      currentMobileTab = tabName;
+
+      const panelDoc = document.getElementById("panel-document");
+      const panelChat = document.getElementById("panel-chat");
+      const panelSources = document.getElementById("panel-sources");
+
+      const btnDoc = document.getElementById("tab-btn-document");
+      const btnChat = document.getElementById("tab-btn-chat");
+      const btnSources = document.getElementById("tab-btn-sources");
+
+      if (!panelDoc || !panelChat || !panelSources) return;
+
+      const activeClass = "text-[var(--accent)] bg-[var(--surface)] shadow-sm font-semibold border border-[var(--border)]/70";
+      const inactiveClass = "text-[var(--muted)] hover:text-[var(--ink)] font-medium border border-transparent";
+
+      [
+        { btn: btnDoc, name: 'document' },
+        { btn: btnChat, name: 'chat' },
+        { btn: btnSources, name: 'sources' }
+      ].forEach(({ btn, name }) => {
+        if (!btn) return;
+        if (name === tabName) {
+          btn.className = `mobile-tab-btn flex-1 py-1.5 sm:py-2 px-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all ${activeClass}`;
+        } else {
+          btn.className = `mobile-tab-btn flex-1 py-1.5 sm:py-2 px-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all ${inactiveClass}`;
+        }
+      });
+
+      if (window.innerWidth <= 992) {
+        panelDoc.classList.add("hidden");
+        panelChat.classList.add("hidden");
+        panelSources.classList.add("hidden");
+
+        if (tabName === "document") panelDoc.classList.remove("hidden");
+        else if (tabName === "chat") panelChat.classList.remove("hidden");
+        else if (tabName === "sources") panelSources.classList.remove("hidden");
+      }
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.addEventListener("resize", () => {
+      const panelDoc = document.getElementById("panel-document");
+      const panelChat = document.getElementById("panel-chat");
+      const panelSources = document.getElementById("panel-sources");
+
+      if (window.innerWidth > 992) {
+        if (panelDoc) panelDoc.classList.remove("hidden");
+        if (panelChat) panelChat.classList.remove("hidden");
+        if (panelSources) panelSources.classList.remove("hidden");
+      } else {
+        switchMobileTab(currentMobileTab);
+      }
+    });
+
+    // Initialize mobile view
+    if (window.innerWidth <= 992) {
+      switchMobileTab("document");
+    }
 
     // ------------------------------------------------------------------------
     // 1. Cursor-Responsive Ambient Warmth Spotlight
@@ -644,9 +871,13 @@
         quickPromptChips.classList.remove("hidden");
         editorialInput.focus();
 
-        // Calm Editorial Welcome Notice
         if (editorialEmptyState) editorialEmptyState.classList.add("hidden");
         addEditorialNotice(`Indexed <em>${escapeHtml(data.filename)}</em> (${data.page_count} pages). You may now inquire below.`);
+
+        // Auto-switch to chat view on mobile once document is indexed
+        if (window.innerWidth <= 992) {
+          switchMobileTab("chat");
+        }
 
       } catch (err) {
         alert(`Upload error: ${err.message}`);
@@ -742,7 +973,7 @@
       const msgWrapper = document.createElement("div");
       msgWrapper.className = "flex justify-end w-full";
       msgWrapper.innerHTML = `
-        <div class="bg-[var(--secondary)] text-[var(--ink)] rounded-2xl px-5 py-3.5 max-w-xl text-sm leading-relaxed font-medium shadow-sm">
+        <div class="user-msg-bubble bg-[var(--secondary)] text-[var(--ink)] rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 max-w-xl text-sm leading-relaxed font-medium shadow-sm">
           ${escapeHtml(text)}
         </div>
       `;
@@ -752,7 +983,7 @@
 
     function renderAssistantResponse(rawMarkdown) {
       const msgWrapper = document.createElement("div");
-      msgWrapper.className = "w-full pl-4 border-l-2 border-[var(--accent)] space-y-2 transition-all";
+      msgWrapper.className = "assistant-msg-bubble w-full pl-3 sm:pl-4 border-l-2 border-[var(--accent)] space-y-2 transition-all";
       
       // Parse markdown with interactive citation pill formatting
       const formattedWithPills = formatCitationPills(rawMarkdown);
@@ -808,10 +1039,14 @@
       if (!sources || sources.length === 0) {
         sourcesDeck.appendChild(sourcesEmptyBox);
         sourcesCounterPill.textContent = "0 References";
+        const mobileCounter = document.getElementById("mobile-sources-counter");
+        if (mobileCounter) mobileCounter.textContent = "0";
         return;
       }
 
       sourcesCounterPill.textContent = `${sources.length} ${sources.length === 1 ? 'Reference' : 'References'}`;
+      const mobileCounter = document.getElementById("mobile-sources-counter");
+      if (mobileCounter) mobileCounter.textContent = String(sources.length);
 
       sources.forEach((source, index) => {
         // Critical normalization: remove linebreaks so words flow as a readable paragraph
@@ -864,6 +1099,9 @@
 
     // Triggered when user clicks a citation pill in the chat
     window.focusSourceCard = function(pageNum) {
+      if (window.innerWidth <= 992) {
+        switchMobileTab("sources");
+      }
       const matchingCards = document.querySelectorAll(`[data-page="${pageNum}"]`);
       if (matchingCards.length > 0) {
         const targetCard = matchingCards[0];
@@ -907,6 +1145,12 @@
       sourcesDeck.innerHTML = "";
       sourcesDeck.appendChild(sourcesEmptyBox);
       sourcesCounterPill.textContent = "0 References";
+      const mobileCounter = document.getElementById("mobile-sources-counter");
+      if (mobileCounter) mobileCounter.textContent = "0";
+
+      if (window.innerWidth <= 992) {
+        switchMobileTab("document");
+      }
     }
 
     function scrollCanvasToBottom() {
