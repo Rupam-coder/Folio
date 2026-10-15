@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
@@ -40,7 +41,7 @@ if not GROQ_API_KEY:
         UserWarning,
     )
 
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "BAAI/bge-small-en-v1.5"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 
@@ -69,24 +70,28 @@ class FastLocalEmbeddings(Embeddings):
 
 
 def initialize_embeddings() -> Embeddings:
-    """Initialize HuggingFace all-MiniLM-L6-v2 embeddings with resilient fallback."""
+    """Initialize FastEmbed (ONNX) embeddings for lightweight, low-memory deployment (<100MB)."""
     try:
-        from langchain_huggingface import HuggingFaceEmbeddings
+        import platform
+        if platform.system() == "Windows":
+            import subprocess, sys
+            probe = subprocess.run([sys.executable, "-c", "import onnxruntime"], capture_output=True)
+            if probe.returncode != 0:
+                warnings.warn(
+                    "Local Windows onnxruntime DLL issue detected. Falling back to FastLocalEmbeddings for local testing. "
+                    "On Linux/Render, FastEmbed ONNX runs natively."
+                )
+                return FastLocalEmbeddings(n_features=384)
 
-        return HuggingFaceEmbeddings(
-            model_name=EMBEDDING_MODEL_NAME,
-            model_kwargs={"device": "cpu"},
-            encode_kwargs={"normalize_embeddings": True},
-        )
+        return FastEmbedEmbeddings(model_name=EMBEDDING_MODEL_NAME)
     except Exception as e:
-        warnings.warn(
-            f"HuggingFace embeddings load failed ({e}), falling back to FastLocalEmbeddings."
-        )
+        warnings.warn(f"FastEmbed load failed ({e}), falling back to FastLocalEmbeddings.")
         return FastLocalEmbeddings(n_features=384)
 
 
-# Global embeddings instance
-embedding_model = initialize_embeddings()
+# Embedding model initialization
+embeddings = initialize_embeddings()
+embedding_model = embeddings
 
 # Groq LLM client configured via LangChain ChatOpenAI interface
 llm = ChatOpenAI(
@@ -211,7 +216,7 @@ async def upload_pdf(file: UploadFile = File(...)):
 
         vectorstore = Chroma.from_documents(
             documents=chunked_docs,
-            embedding=embedding_model,
+            embedding=embeddings,
             persist_directory=None,  # In-memory session store
             collection_name=collection_name,
         )

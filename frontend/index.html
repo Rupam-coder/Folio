@@ -486,9 +486,10 @@
 
   </div>
 
-  <!-- ==================== FRONTEND JAVASCRIPT ==================== -->
   <script>
-    const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:8000" : "YOUR_RENDER_BACKEND_URL";
+    const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:8000"
+      : "https://folio-backend-lj6l.onrender.com";
 
     // Application State
     let currentSessionId = null;
